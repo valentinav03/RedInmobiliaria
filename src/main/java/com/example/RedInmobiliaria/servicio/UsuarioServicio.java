@@ -5,37 +5,53 @@
 package com.example.RedInmobiliaria.servicio;
 
 import com.example.RedInmobiliaria.modelo.Usuario;
+import com.example.RedInmobiliaria.repositorio.UsuarioRepositorio;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
  * @author Karolina Aponte
  */
+
+@Service
+@Transactional
 public class UsuarioServicio implements IUsuarioServicio{
+    
+    @Autowired
+    UsuarioRepositorio usuarioRepositorio;
 
     @Override
     public List<Usuario> getUsuario() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return usuarioRepositorio.findAll();
     }
 
     @Override
     public Usuario buscarUsuario(Long id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Usuario usuario = null;
+        usuario = usuarioRepositorio.findById(id).orElse(null);
+        if (usuario == null) {
+            return null;
+        }
+        return usuario;
     }
 
     @Override
     public Usuario nuevoUsuario(Usuario usuario) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return usuarioRepositorio.save(usuario);
     }
 
     @Override
     public Usuario editarUsuario(Usuario usuario) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return usuarioRepositorio.save(usuario);
     }
 
     @Override
     public int borrarUsuario(Long id) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        usuarioRepositorio.deleteById(id);
+        return 1;
     }
     
 }
