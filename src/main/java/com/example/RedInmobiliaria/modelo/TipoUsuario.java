@@ -23,6 +23,7 @@ public class TipoUsuario {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_tipo_usuario")
     private Long id;
     
     @Column(name = "nombre_tipo_usuario")

@@ -7,6 +7,7 @@ package com.example.RedInmobiliaria.servicio;
 import com.example.RedInmobiliaria.modelo.Usuario;
 import com.example.RedInmobiliaria.repositorio.UsuarioRepositorio;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,4 +55,12 @@ public class UsuarioServicio implements IUsuarioServicio{
         return 1;
     }
     
+    @Override
+    public Usuario buscarUsuarioNombre(Usuario usuario) {
+        if (usuario == null || usuario.getNombre_usuario() == null) {
+            return null;
+        }
+        Optional<Usuario> usuarioOptional = usuarioRepositorio.findByNombreUsuario(usuario.getNombre_usuario());
+        return usuarioOptional.orElse(null);
+    }
 }

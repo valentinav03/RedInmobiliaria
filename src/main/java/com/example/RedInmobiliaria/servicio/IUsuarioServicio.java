@@ -19,6 +19,9 @@ public interface IUsuarioServicio {
     //buscar por llaves 
     Usuario buscarUsuario(Long id);
     
+    //buscar por nombre
+    Usuario buscarUsuarioNombre(Usuario usuario);
+    
     //Crear registro u objeto
     Usuario nuevoUsuario(Usuario usuario);
     

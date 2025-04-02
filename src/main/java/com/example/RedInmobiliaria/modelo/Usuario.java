@@ -25,10 +25,11 @@ public class Usuario {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_usuario")
     private Long id;
     
     @Column(name = "nombre_usuario")
-    private String nombre_usuario;
+    private String nombreUsuario;
     
     @Column(name = "email_usuario")
     private String email_usuario;
@@ -36,15 +37,19 @@ public class Usuario {
     @ManyToOne
     @JoinColumn(name = "id_tipo_usuario")
     private TipoUsuario id_tipo_usuario;
+    
+    @Column(name = "password")
+    private String password;
 
     public Usuario() {
     }
 
-    public Usuario(Long id, String nombre_usuario, String email_usuario, TipoUsuario id_tipo_usuario) {
+    public Usuario(Long id, String nombreUsuario, String email_usuario, TipoUsuario id_tipo_usuario, String password) {
         this.id = id;
-        this.nombre_usuario = nombre_usuario;
+        this.nombreUsuario = nombreUsuario;
         this.email_usuario = email_usuario;
         this.id_tipo_usuario = id_tipo_usuario;
+        this.password = password;
     }
 
     public Long getId() {
@@ -56,11 +61,11 @@ public class Usuario {
     }
 
     public String getNombre_usuario() {
-        return nombre_usuario;
+        return nombreUsuario;
     }
 
-    public void setNombre_usuario(String nombre_usuario) {
-        this.nombre_usuario = nombre_usuario;
+    public void setNombre_usuario(String nombreUsuario) {
+        this.nombreUsuario = nombreUsuario;
     }
 
     public String getEmail_usuario() {
@@ -77,6 +82,14 @@ public class Usuario {
 
     public void setId_tipo_usuario(TipoUsuario id_tipo_usuario) {
         this.id_tipo_usuario = id_tipo_usuario;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
     
     

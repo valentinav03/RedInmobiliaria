@@ -30,14 +30,22 @@ public class UsuarioControlador {
     @Autowired
     UsuarioServicio usuarioServicio;
     
-    @GetMapping("/List")
+    @GetMapping("/list")
     public List<Usuario> cargarProductos(){
         return usuarioServicio.getUsuario();
     }
     
-    @GetMapping("/List/{id}")
+    @GetMapping("/list/{id}")
     public Usuario buscarPorId(@PathVariable Long id){
         return usuarioServicio.buscarUsuario(id); 
+    }
+    
+    @GetMapping("/list/nombre/{nombreUsuario}")
+    public Usuario buscarPorNombre(@PathVariable String nombreUsuario){
+        
+        Usuario usuario = new Usuario();
+        usuario.setNombre_usuario(nombreUsuario);
+        return usuarioServicio.buscarUsuarioNombre(usuario);
     }
     
     @PostMapping
@@ -55,6 +63,7 @@ public class UsuarioControlador {
             obj.setNombre_usuario(usuario.getNombre_usuario());
             obj.setEmail_usuario(usuario.getEmail_usuario());
             obj.setId_tipo_usuario(usuario.getId_tipo_usuario());
+            obj.setPassword(usuario.getPassword());
             
             Usuario usuarioActualizado = usuarioServicio.editarUsuario(obj);
             return new ResponseEntity<>(usuarioActualizado, HttpStatus.OK);
