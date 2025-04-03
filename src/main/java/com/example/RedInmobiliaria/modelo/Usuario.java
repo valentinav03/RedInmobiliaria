@@ -12,6 +12,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.Collection;
+import java.util.Collections;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 
 /**
@@ -20,7 +25,7 @@ import jakarta.persistence.Table;
  */
 @Entity
 @Table(name = Usuario.TABLE_NAME)
-public class Usuario {
+public class Usuario implements UserDetails{
     public static final String TABLE_NAME = "usuario";
     
     @Id
@@ -91,7 +96,34 @@ public class Usuario {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + id_tipo_usuario.getNombre_tipo_usuario()));
+    }
+
+    @Override
+    public String getUsername() {
+         return nombreUsuario;
+    }
     
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
     
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
     
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+    
+    @Override
+    public boolean isEnabled() {
+        return true;
+    } 
 }
