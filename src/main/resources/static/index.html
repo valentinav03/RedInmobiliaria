@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Propiedades</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+            text-align: center;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        button {
+            padding: 5px 10px;
+            margin: 5px;
+            border: none;
+            cursor: pointer;
+        }
+        .edit-btn { background-color: #FFC107; }
+        .delete-btn { background-color: #DC3545; color: white; }
+    </style>
+</head>
+<body onload="cargarPropiedades(); cargarOpciones();">
+
+<h2>Gestión de Propiedades</h2>
+
+<button onclick="cargarPropiedades()">Cargar Propiedades</button>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Vendedor</th>
+        <th>Tipo</th>
+        <th>Operación</th>
+        <th>Estado</th>
+        <th>Precio</th>
+        <th>Dirección</th>
+        <th>Latitud</th>
+        <th>Longitud</th>
+        <th>Acciones</th>
+    </tr>
+    </thead>
+    <tbody id="propiedades-list"></tbody>
+</table>
+
+<h3>Agregar / Editar Propiedad</h3>
+<form id="formulario">
+    <!-- Campo oculto para almacenar el ID de la propiedad al editar -->
+    <input type="hidden" id="idPropiedad">
+
+    <input type="number" id="idVendedor" placeholder="ID Vendedor" required>
+
+    <label for="tipo">Tipo de Propiedad:</label>
+    <select id="tipo"></select>
+
+    <label for="operacion">Operación:</label>
+    <select id="operacion"></select>
+
+    <label for="estado">Estado:</label>
+    <select id="estado"></select>
+
+    <input type="number" id="idPrecio" placeholder="Precio" required>
+    <input type="text" id="direccion" placeholder="Dirección" required>
+    <input type="number" id="latitud" placeholder="Latitud" step="any" required>
+    <input type="number" id="longitud" placeholder="Longitud" step="any" required>
+
+    <button type="submit" id="boton-guardar">Agregar</button>
+    <button type="button" id="boton-actualizar" style="display: none;" onclick="actualizarPropiedad()">Actualizar</button>
+</form>
+
+<script src="script.js"></script>
+
+</body>
+</html>
