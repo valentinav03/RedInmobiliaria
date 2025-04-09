@@ -4,6 +4,8 @@
  */
 package com.example.RedInmobiliaria.Seguridad.Jwt;
 
+import com.example.RedInmobiliaria.modelo.Usuario;
+import com.example.RedInmobiliaria.repositorio.UsuarioRepositorio;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -15,12 +17,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
-
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Base64;
 import java.util.Date;
 import javax.crypto.SecretKey;
+import org.springframework.beans.factory.annotation.Autowired;
 /**
  *
  * @author Karolina Aponte
@@ -31,6 +32,9 @@ public class JwtUtils {
     
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
     
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
+        
     @Value("${jwt.secret:}")
     private String jwtSecret;
     
@@ -65,9 +69,15 @@ public class JwtUtils {
     // Generar token JWT a partir de la autenticación
     public String generateJwtToken(Authentication authentication) {
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername();
+        
+        // Buscar el usuario para obtener su ID
+        Usuario usuario = usuarioRepositorio.findByNombreUsuario(username)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con nombre de usuario: " + username));
         
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(username)
+                .claim("id", usuario.getId()) // Añadir el ID como un claim
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(secretKey)
@@ -87,6 +97,16 @@ public class JwtUtils {
                 .parseClaimsJws(token)
                 .getBody()
                 .getSubject();
+    }
+    
+    // Extraer ID de usuario del token JWT
+    public Long getUserIdFromJwtToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("id", Long.class);
     }
     
     // Validar el token JWT
@@ -117,5 +137,14 @@ public class JwtUtils {
         }
         
         return null;
+    }
+    
+    public String generateJwtTokenWithUserDetails(UserDetails userDetails) {
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date())
+                .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+                .signWith(secretKey, SignatureAlgorithm.HS512)
+                .compact();
     }
 }

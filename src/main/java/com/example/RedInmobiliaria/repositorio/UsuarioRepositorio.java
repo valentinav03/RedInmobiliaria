@@ -13,6 +13,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Karolina Aponte
  */
 public interface UsuarioRepositorio extends JpaRepository<Usuario, Long>{
-    Optional<Usuario> findByNombreUsuario(String nombreUsuario);
+    Optional<Usuario> findByNombreUsuario(String nombreUsuario);  
     
 }

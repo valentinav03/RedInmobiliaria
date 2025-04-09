@@ -6,6 +6,7 @@ package com.example.RedInmobiliaria.Seguridad.config;
 
 import com.example.RedInmobiliaria.Seguridad.Jwt.JwtAuthEntryPoint;
 import com.example.RedInmobiliaria.Seguridad.Jwt.JwtTokenFilter;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -64,6 +65,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        
+        http.cors(cors -> cors.configurationSource(request -> {
+        var corsConfig = new org.springframework.web.cors.CorsConfiguration();
+        corsConfig.setAllowedOrigins(List.of("http://127.0.0.1:5500")); // Permitir el frontend
+        corsConfig.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
+        corsConfig.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+        corsConfig.setAllowCredentials(true);
+        return corsConfig;
+        }));
+        
         http.csrf(csrf -> csrf.disable())
             .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
