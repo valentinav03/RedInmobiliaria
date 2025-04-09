@@ -1,7 +1,7 @@
-package com.example.RedInmobiliaria.servicios;
+package com.example.RedInmobiliaria.servicio;
 
-import com.example.RedInmobiliaria.modelos.cita;
-import com.example.RedInmobiliaria.repositorios.CitaRepositorio;
+import com.example.RedInmobiliaria.modelo.cita;
+import com.example.RedInmobiliaria.repositorio.CitaRepositorio;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,7 +10,7 @@ import java.util.List;
 
 @Service
 @Transactional
-public class CitaService implements ICitaService{
+public class CitaService implements ICitaService {
     @Autowired
     CitaRepositorio citaRepositorio;
 

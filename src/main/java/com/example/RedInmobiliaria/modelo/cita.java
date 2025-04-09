@@ -1,11 +1,8 @@
-package com.example.RedInmobiliaria.modelos;
+package com.example.RedInmobiliaria.modelo;
 
 import jakarta.persistence.*;
-import org.springframework.cglib.core.Local;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 
 
 @Entity
@@ -29,12 +26,12 @@ public class cita {
 
     @ManyToOne
     @JoinColumn(name = "id_estado")
-    private static estadoCita idEstado;
+    private estadoCita idEstado;
 
     public cita(){
     }
 
-    public cita(Integer id, estadoCita idEstado, LocalDateTime fechaHora, Integer idCliente, Integer idPropiedad){
+    public cita(Integer id, estadoCita idEstado, LocalDateTime fechaHora, Usuario idCliente, Propiedad idPropiedad){
         this.id = id;
         this.idEstado = idEstado;
         this.idCliente = idCliente;
@@ -44,8 +41,8 @@ public class cita {
 
     public Integer getId() {return id;}
     public estadoCita getIdEstado() { return idEstado;}
-    public Integer getIdCliente() {return idCliente;}
-    public Integer getIdPropiedad() {return idPropiedad;}
+    public Usuario getIdCliente() {return idCliente;}
+    public Propiedad getIdPropiedad() {return idPropiedad;}
     public LocalDateTime getFechaHora() {return fechaHora;}
     public void setId(Integer id) { this.id=id;}
     public void setIdCliente(Usuario idCliente) {this.idCliente = idCliente;}

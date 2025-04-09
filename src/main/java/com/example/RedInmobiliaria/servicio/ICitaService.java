@@ -1,6 +1,6 @@
-package com.example.RedInmobiliaria.servicios;
+package com.example.RedInmobiliaria.servicio;
 
-import com.example.RedInmobiliaria.modelos.cita;
+import com.example.RedInmobiliaria.modelo.cita;
 
 import java.util.List;
 

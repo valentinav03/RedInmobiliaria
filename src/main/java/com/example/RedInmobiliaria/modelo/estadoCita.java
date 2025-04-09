@@ -1,4 +1,4 @@
-package com.example.RedInmobiliaria.modelos;
+package com.example.RedInmobiliaria.modelo;
 
 
 import jakarta.persistence.*;

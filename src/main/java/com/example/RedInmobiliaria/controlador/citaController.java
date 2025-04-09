@@ -1,8 +1,8 @@
-package com.example.RedInmobiliaria.controladores;
+package com.example.RedInmobiliaria.controlador;
 
 
-import com.example.RedInmobiliaria.modelos.cita;
-import com.example.RedInmobiliaria.servicios.CitaService;
+import com.example.RedInmobiliaria.modelo.cita;
+import com.example.RedInmobiliaria.servicio.CitaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
