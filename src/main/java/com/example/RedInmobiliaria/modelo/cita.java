@@ -18,7 +18,7 @@ public class cita {
     private Usuario idCliente;
 
     @ManyToOne
-    @JoinColumn(name = "propiedad")
+    @JoinColumn(name = "id_propiedad")
     private Propiedad idPropiedad;
 
     @Column(name = "fecha_hora")
