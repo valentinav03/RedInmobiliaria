@@ -24,7 +24,7 @@ public class TipoUsuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_tipo_usuario")
-    private Long id;
+    private Integer id;
     
     @Column(name = "nombre_tipo_usuario")
     private String nombre_tipo_usuario;
@@ -32,16 +32,16 @@ public class TipoUsuario {
     public TipoUsuario() {
     }
 
-    public TipoUsuario(Long id, String nombre_tipo_usuario) {
+    public TipoUsuario(Integer id, String nombre_tipo_usuario) {
         this.id = id;
         this.nombre_tipo_usuario = nombre_tipo_usuario;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

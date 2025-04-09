@@ -125,7 +125,7 @@ public class UsuarioControlador {
                 if (tipoUsuarioObj instanceof Map) {
                     Map<String, Object> tipoUsuarioMap = (Map<String, Object>) tipoUsuarioObj;
                     if (tipoUsuarioMap.containsKey("id")) {
-                        Long tipoUsuarioId = Long.valueOf(tipoUsuarioMap.get("id").toString());
+                        Integer tipoUsuarioId = Integer.valueOf(tipoUsuarioMap.get("id").toString());
                         TipoUsuario tipoUsuario = new TipoUsuario();
                         tipoUsuario.setId(tipoUsuarioId);
                         usuario.setId_tipo_usuario(tipoUsuario);
