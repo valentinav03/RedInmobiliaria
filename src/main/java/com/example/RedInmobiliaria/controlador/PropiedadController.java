@@ -4,10 +4,10 @@ import com.example.RedInmobiliaria.modelo.Propiedad;
 import com.example.RedInmobiliaria.modelo.TipoPropiedad;
 import com.example.RedInmobiliaria.modelo.Operacion;
 import com.example.RedInmobiliaria.modelo.EstadoPropiedad;
+import com.example.RedInmobiliaria.repositorio.EstadoPropiedadRepository;
+import com.example.RedInmobiliaria.repositorio.OperacionRepository;
 import com.example.RedInmobiliaria.repositorio.PropiedadRepository;
 import com.example.RedInmobiliaria.repositorio.TipoPropiedadRepository;
-import com.example.RedInmobiliaria.repositorio.OperacionRepository;
-import com.example.RedInmobiliaria.repositorio.EstadoPropiedadRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -56,7 +56,7 @@ public class PropiedadController {
             propiedad.setTipo(propiedadDetalles.getTipo());
             propiedad.setOperacion(propiedadDetalles.getOperacion());
             propiedad.setEstado(propiedadDetalles.getEstado());
-            propiedad.setIdPrecio(propiedadDetalles.getIdPrecio());
+            propiedad.setPrecio(propiedadDetalles.getPrecio());
             propiedad.setDireccion(propiedadDetalles.getDireccion());
             propiedad.setLatitud(propiedadDetalles.getLatitud());
             propiedad.setLongitud(propiedadDetalles.getLongitud());
