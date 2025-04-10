@@ -10,6 +10,7 @@ public class estadoCita {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_estado")
     private Integer id;
 
     @Column(name = "nombre_estado_cita")

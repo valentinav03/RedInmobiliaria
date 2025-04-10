@@ -27,8 +27,8 @@ public class citaController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<cita> editar(@RequestBody cita cita){
-        cita obj = citaService.buscarCita(cita.getId());
+    public ResponseEntity<cita> editar(@PathVariable Integer id, @RequestBody cita cita){
+        cita obj = citaService.buscarCita(id);
         if(obj != null) {
             obj.setIdEstado(cita.getIdEstado());
             obj.setId(cita.getId());

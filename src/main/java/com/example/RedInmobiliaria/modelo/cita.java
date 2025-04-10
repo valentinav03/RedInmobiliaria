@@ -11,6 +11,7 @@ public class cita {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_cita")
     private Integer id;
 
     @ManyToOne
