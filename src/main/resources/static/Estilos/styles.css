@@ -25,6 +25,7 @@ body {
 }
 
 .container {
+    margin-right: 150px;
     width: 100%;
     max-width: 420px;
     padding: 20px;
@@ -36,7 +37,15 @@ body {
     border-radius: 8px;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
     transition: all 0.3s ease;
+    
 }
+
+#formCita {
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    flex-direction: column;
+  }
 
 .form-header {
     text-align: center;
@@ -190,3 +199,90 @@ body {
     color: var(--primary);
     margin-top: 5px;
 }
+
+.btn-agendar-cita {
+    margin-top: 12px;
+    margin-left: 300px;
+    background-color: #a67c52;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.btn-agendar-cita:hover {
+    background-color: #8a6545;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f5f2;
+    margin: 0;
+    padding: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+  
+  h2 {
+    margin-bottom: 700px;
+    color: #5a4e43;
+    display:flex;
+  }
+  
+
+  form#formCita {
+    margin-bottom: 100px;;
+    background-color: #fff;
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+    width: 100%;
+    max-width: 500px;
+    border: 1px solid #e6e2dd;
+  }
+  
+  form label {
+    display: block;
+    margin-top: 15px;
+    font-weight: 600;
+    color: #6e5e4d;
+  }
+  
+  form input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-top: 6px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #fcfbf9;
+    transition: border 0.3s;
+  }
+  
+  form input:focus {
+    border-color: #b3926d;
+    outline: none;
+  }
+  
+  button[type="submit"] {
+    margin-top: 25px;
+    width: 100%;
+    background-color: #b3926d;
+    color: #fff;
+    border: none;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  button[type="submit"]:hover {
+    background-color: #977a57;
+  }
+  
+  

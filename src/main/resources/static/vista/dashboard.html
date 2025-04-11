@@ -29,8 +29,9 @@
             
             <ul class="sidebar-menu">
                 <li class="active"><a href="#"><i class="fas fa-home"></i> Panel Principal</a></li>
-                <li><a href="#"><i class="fas fa-list"></i> Propiedades</a></li>
-                <li><a href="#"><i class="fas fa-calendar"></i> Citas</a></li>
+                <li><a href="administracion.html"><i class="fas fa-list"></i>Administración de propiedades</a></li>
+                <li><a href="ver-citas.html"><i class="fas fa-calendar"></i> Citas</a></li>
+                <li><a href="ImagenPropiedad.html"><i class="fas fa-edit"></i>Edición de imágenes</a></li>
                 <li><a href="usuario.html"><i class="fas fa-user"></i> Mi Perfil</a></li>
                 <li class="logout"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
             </ul>
@@ -110,25 +111,29 @@
                 <div class="properties-grid">
                     <!-- Las propiedades se cargarán dinámicamente aquí -->
                     <div class="property-card">
-                        <div class="property-image"></div>
+                        <div class="property-image">
+                            <img src="/img/casa1.jpg" alt="Imagen de la propiedad" style="width: 100%; height: 125%; border-radius: 8px;">
+                        </div>
                         <div class="property-info">
-                            <h4>Casa de Lujo en Centro</h4>
-                            <p class="property-location"><i class="fas fa-map-marker-alt"></i> Calle Principal 123</p>
-                            <p class="property-price">$250,000</p>
+                            <h4>Casa de Lujo en las afueras de la ciudad</h4>
+                            <p class="property-location"><i class="fas fa-map-marker-alt"></i> Jardín Villanueva </p>
+                            <p class="property-price">$900.000.000 <button class="btn-agendar-cita" onclick="window.location.href='cita.html?idPropiedad=19'">Agendar Cita</button></p>
                             <div class="property-features">
-                                <span><i class="fas fa-bed"></i> 3</span>
-                                <span><i class="fas fa-bath"></i> 2</span>
+                                <span><i class="fas fa-bed"></i>4</span>
+                                <span><i class="fas fa-bath"></i>2</span>
                                 <span><i class="fas fa-ruler-combined"></i> 150m²</span>
                             </div>
                         </div>
                     </div>
                     
                     <div class="property-card">
-                        <div class="property-image"></div>
+                        <div class="property-image">
+                            <img src="/img/apto1.jpg" alt="Imagen de la propiedad" style="width: 100%; height: 125%; border-radius: 8px;">
+                        </div>
                         <div class="property-info">
                             <h4>Apartamento Moderno</h4>
                             <p class="property-location"><i class="fas fa-map-marker-alt"></i> Av. Libertad 456</p>
-                            <p class="property-price">$180,000</p>
+                            <p class="property-price">$400.000.000 <button class="btn-agendar-cita" onclick="window.location.href='cita.html'">Agendar Cita</button></p>
                             <div class="property-features">
                                 <span><i class="fas fa-bed"></i> 2</span>
                                 <span><i class="fas fa-bath"></i> 1</span>

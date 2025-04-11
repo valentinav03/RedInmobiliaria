@@ -35,6 +35,18 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Si llegamos aquí, el login fue exitoso
             console.log('Login exitoso:', response);
+            console.log("Respuesta completa del backend:", response);
+
+            // Guardar datos del usuario en localStorage
+            localStorage.setItem("user", JSON.stringify({
+                id: response.id,
+                nombreUsuario: response.nombreUsuario,
+                email: response.email,
+                rol: response.rol
+            }));
+            localStorage.setItem('nombreUsuario', response.nombreUsuario);
+            localStorage.setItem("id", response.id);
+
             
             // Redirigir al dashboard o página principal
             window.location.href = 'dashboard.html';

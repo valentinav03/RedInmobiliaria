@@ -1,7 +1,11 @@
 package com.example.RedInmobiliaria.controlador;
 
 
+import com.example.RedInmobiliaria.dto.CitaDto;
 import com.example.RedInmobiliaria.modelo.cita;
+import com.example.RedInmobiliaria.repositorio.EstadoCitaRepositorio;
+import com.example.RedInmobiliaria.repositorio.PropiedadRepository;
+import com.example.RedInmobiliaria.repositorio.UsuarioRepositorio;
 import com.example.RedInmobiliaria.servicio.CitaService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +19,15 @@ import java.util.List;
 public class citaController {
     @Autowired
     CitaService citaService;
+
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
+
+    @Autowired
+    private PropiedadRepository propiedadRepository;
+
+    @Autowired
+    private EstadoCitaRepositorio estadoCitaRepositorio;
 
     @GetMapping("/list")
     public List<cita> cargarUsuarios(){
@@ -43,10 +56,17 @@ public class citaController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<cita> agregar(@RequestBody cita cita) {
-        cita obj = citaService.nuevaCita(cita);
+    public ResponseEntity<cita> agregar(@RequestBody CitaDto citaDto) {
+        cita nueva = new cita();
+        nueva.setIdCliente(usuarioRepositorio.findById(citaDto.getIdCliente()).orElseThrow());
+        nueva.setIdPropiedad(propiedadRepository.findById(citaDto.getIdPropiedad()).orElseThrow());
+        nueva.setIdEstado(estadoCitaRepositorio.findById(citaDto.getIdEstado()).orElseThrow());
+        nueva.setFechaHora(citaDto.getFechaHora());
+
+        cita obj = citaService.nuevaCita(nueva);
         return new ResponseEntity<>(obj, HttpStatus.OK);
     }
+
 
 
     @DeleteMapping("/{id}")
