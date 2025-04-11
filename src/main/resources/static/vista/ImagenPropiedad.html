@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Imágenes por Propiedad</title>
+  <link rel="stylesheet" href="../Estilos/ImagenPropiedad.css">
+</head>
+<body>
+  <header>
+    <h1>Gestión de Imágenes por Propiedad</h1>
+  </header>
+
+  <div class="container">
+    <div class="form-section">
+      <h2>Buscar Imágenes por Propiedad</h2>
+      <form onsubmit="buscarPorPropiedad(event)">
+        <label for="idPropiedadBuscar">ID de la Propiedad:</label>
+        <input type="number" id="idPropiedadBuscar" placeholder="Ingresa el ID de la propiedad" required>
+        <div class="buttons">
+          <button type="submit">Buscar</button>
+          <button type="button" onclick="mostrarTodasLasImagenes()">Mostrar Todas las Imágenes</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Botón para añadir nueva imagen -->
+    <div>
+      <button class="add-button" onclick="mostrarFormulario()">Añadir Nueva Imagen</button>
+    </div>
+
+    <div class="form-section" id="formularioImagen" style="display: none;">
+      <h2 id="tituloFormulario">Nueva Imagen</h2>
+      <form onsubmit="submitFormulario(event)">
+        <input type="hidden" id="idImagen">
+        <label for="idPropiedad">ID de la Propiedad:</label>
+        <input type="number" id="idPropiedad" placeholder="Ingresa el ID de la propiedad" required>
+        <label for="urlImagen">URL de la Imagen:</label>
+        <input type="text" id="urlImagen" placeholder="Ingresa la URL de la imagen" required>
+        <div class="buttons">
+          <button type="submit">Guardar</button>
+          <button type="button" onclick="cerrarFormulario()">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="table-section">
+      <h2>Lista de Imágenes</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>ID Imagen</th>
+            <th>ID Propiedad</th>
+            <th>Previsualización</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="listaImagenes">
+          <!-- Las filas de imágenes se generarán dinámicamente -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script>
+    const API_URL = '/api/imagenPropiedad';
+
+    function buscarPorPropiedad(event) {
+      event.preventDefault();
+      const idPropiedad = document.getElementById('idPropiedadBuscar').value;
+
+      fetch(`${API_URL}/propiedad/${idPropiedad}`)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('No se encontraron imágenes para la propiedad especificada.');
+          }
+          return response.json();
+        })
+        .then(data => {
+          cargarImagenes(data);
+        })
+        .catch(error => {
+          console.error('Error al buscar imágenes:', error);
+          alert('No se encontraron imágenes para la propiedad especificada.');
+        });
+    }
+
+    function mostrarTodasLasImagenes() {
+      fetch(`${API_URL}`)
+        .then(response => response.json())
+        .then(data => {
+          cargarImagenes(data);
+        })
+        .catch(error => {
+          console.error('Error al cargar todas las imágenes:', error);
+          alert('Error al cargar todas las imágenes.');
+        });
+    }
+
+    function cargarImagenes(imagenes) {
+      const lista = document.getElementById('listaImagenes');
+      lista.innerHTML = '';
+      imagenes.forEach(imagen => {
+        const fila = document.createElement('tr');
+        fila.innerHTML = `
+          <td>${imagen.idImagen}</td>
+          <td>${imagen.propiedad.idPropiedad}</td>
+          <td><img src="${imagen.urlImagen}" alt="Imagen de propiedad"></td>
+          <td>
+            <div class="action-buttons">
+              <button class="edit-button" onclick="editarImagen(${imagen.idImagen})">Editar</button>
+              <button class="delete-button" onclick="eliminarImagen(${imagen.idImagen})">Eliminar</button>
+            </div>
+          </td>
+        `;
+        lista.appendChild(fila);
+      });
+    }
+
+    function mostrarFormulario() {
+      document.getElementById('formularioImagen').style.display = 'block';
+    }
+
+    function cerrarFormulario() {
+      document.getElementById('formularioImagen').style.display = 'none';
+      document.getElementById('idImagen').value = '';
+      document.getElementById('idPropiedad').value = '';
+      document.getElementById('urlImagen').value = '';
+    }
+
+    function submitFormulario(event) {
+      event.preventDefault();
+      const idImagen = document.getElementById('idImagen').value;
+      const idPropiedad = document.getElementById('idPropiedad').value;
+      const urlImagen = document.getElementById('urlImagen').value;
+
+      const imagen = {
+        propiedad: { idPropiedad: parseInt(idPropiedad) },
+        urlImagen: urlImagen
+      };
+
+      if (idImagen) {
+        fetch(`${API_URL}/${idImagen}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(imagen)
+        }).then(() => {
+          mostrarTodasLasImagenes();
+          cerrarFormulario();
+        });
+      } else {
+        fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(imagen)
+        }).then(() => {
+          mostrarTodasLasImagenes();
+          cerrarFormulario();
+        });
+      }
+    }
+
+    function editarImagen(idImagen) {
+      fetch(`${API_URL}/${idImagen}`)
+        .then(response => response.json())
+        .then(imagen => {
+          document.getElementById('idImagen').value = imagen.idImagen;
+          document.getElementById('idPropiedad').value = imagen.propiedad.idPropiedad;
+          document.getElementById('urlImagen').value = imagen.urlImagen;
+          mostrarFormulario();
+        });
+    }
+
+    function eliminarImagen(idImagen) {
+      if (confirm('¿Estás seguro de eliminar esta imagen?')) {
+        fetch(`${API_URL}/${idImagen}`, { method: 'DELETE' })
+          .then(() => mostrarTodasLasImagenes());
+      }
+    }
+  </script>
+</body>
+</html>
