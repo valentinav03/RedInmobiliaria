@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gestión de Propiedades</title>
+  <style>
+    :root {
+      --primary: #8D7B68;
+      --secondary: #A4907C;
+      --accent: #C8B6A6;
+      --light: #F1DEC9;
+      --dark: #4D4639;
+      --error: #A94442;
+      --success: #3C763D;
+    }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: var(--light);
+      color: var(--dark);
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      color: var(--primary);
+      text-align: center;
+    }
+
+    button {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    button:hover {
+      background-color: var(--secondary);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      background-color: white;
+    }
+
+    th, td {
+      border: 1px solid var(--accent);
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: var(--accent);
+      color: var(--dark);
+    }
+
+    #formularioPropiedad {
+      background-color: white;
+      padding: 20px;
+      border: 1px solid var(--accent);
+      border-radius: 5px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 4px;
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+    }
+
+    form button[type="submit"] {
+      background-color: var(--success);
+    }
+
+    form button[type="button"] {
+      background-color: var(--error);
+    }
+
+    form button[type="submit"]:hover {
+      background-color: #2e5e2c;
+    }
+
+    form button[type="button"]:hover {
+      background-color: #7d1f1b;
+    }
+  </style>
+</head>
+<body>
+  <h1>Administración de Propiedades</h1>
+
+  <button onclick="mostrarFormulario()">Crear Propiedad</button>
+
+  <div id="formularioPropiedad">
+    <h2 id="tituloFormulario">Nueva Propiedad</h2>
+    <form onsubmit="submitFormulario(event)">
+      <input type="hidden" id="idPropiedad">
+      <label>Dirección: <input type="text" id="direccion" required></label>
+      <label>Precio: <input type="number" id="precio" required></label>
+      <label>Tipo:
+        <select id="tipo" required></select>
+      </label>
+      <label>Operación:
+        <select id="operacion" required></select>
+      </label>
+      <label>Estado:
+        <select id="estado" required></select>
+      </label>
+      <label>Latitud: <input type="number" id="latitud" required></label>
+      <label>Longitud: <input type="number" id="longitud" required></label>
+      <label>ID Vendedor: <input type="number" id="idVendedor" required></label>
+      <button type="submit">Guardar</button>
+      <button type="button" onclick="cancelarEdicion()">Cancelar</button>
+    </form>
+  </div>
+
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Dirección</th>
+        <th>Precio</th>
+        <th>Tipo</th>
+        <th>Operación</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tablaPropiedades"></tbody>
+  </table>
+</body>
+</html>
+
+
+
+  <script>
+    const API_BASE = 'http://localhost:8094/api/propiedades';
+
+    function mostrarFormulario() {
+      document.getElementById('formularioPropiedad').style.display = 'block';
+      document.getElementById('tituloFormulario').innerText = 'Nueva Propiedad';
+      document.getElementById('idPropiedad').value = '';
+      document.querySelector('#formularioPropiedad form').reset();
+    }
+
+    function cancelarEdicion() {
+      document.getElementById('formularioPropiedad').style.display = 'none';
+      document.getElementById('idPropiedad').value = '';
+    }
+
+    function cargarPropiedades() {
+      fetch(`${API_BASE}`)
+        .then(res => res.json())
+        .then(data => {
+          const tabla = document.getElementById('tablaPropiedades');
+          tabla.innerHTML = '';
+          data.forEach(prop => {
+            tabla.innerHTML += `
+              <tr>
+                <td>${prop.idPropiedad}</td>
+                <td>${prop.direccion}</td>
+                <td>${prop.precio}</td>
+                <td>${prop.tipo.nombreTipoPropiedad}</td>
+                <td>${prop.operacion.nombreOperacion}</td>
+                <td>${prop.estado.nombreEstadoPropiedad}</td>
+                <td>
+                  <button onclick="editarPropiedad(${prop.idPropiedad})">Editar</button>
+                  <button onclick="eliminarPropiedad(${prop.idPropiedad})">Eliminar</button>
+                </td>
+              </tr>
+            `;
+          });
+        })
+        .catch(err => {
+          console.error('Error cargando propiedades:', err);
+        });
+    }
+
+    function cargarOpciones() {
+      fetch(`${API_BASE}/tipos`)
+        .then(res => res.json())
+        .then(tipos => {
+          const tipoSelect = document.getElementById('tipo');
+          tipoSelect.innerHTML = '';
+          tipos.forEach(t => {
+            tipoSelect.innerHTML += `<option value="${t.idTipo}">${t.nombreTipoPropiedad}</option>`;
+          });
+        });
+
+      fetch(`${API_BASE}/operaciones`)
+        .then(res => res.json())
+        .then(ops => {
+          const opSelect = document.getElementById('operacion');
+          opSelect.innerHTML = '';
+          ops.forEach(o => {
+            opSelect.innerHTML += `<option value="${o.idOperacion}">${o.nombreOperacion}</option>`;
+          });
+        });
+
+      fetch(`${API_BASE}/estados`)
+        .then(res => res.json())
+        .then(estados => {
+          const estadoSelect = document.getElementById('estado');
+          estadoSelect.innerHTML = '';
+          estados.forEach(e => {
+            estadoSelect.innerHTML += `<option value="${e.idEstado}">${e.nombreEstadoPropiedad}</option>`;
+          });
+        });
+    }
+
+    function submitFormulario(e) {
+      e.preventDefault();
+
+      const id = document.getElementById('idPropiedad').value;
+      const propiedad = {
+        direccion: document.getElementById('direccion').value,
+        precio: parseFloat(document.getElementById('precio').value),
+        tipo: { idTipo: parseInt(document.getElementById('tipo').value) },
+        operacion: { idOperacion: parseInt(document.getElementById('operacion').value) },
+        estado: { idEstado: parseInt(document.getElementById('estado').value) },
+        latitud: parseFloat(document.getElementById('latitud').value),
+        longitud: parseFloat(document.getElementById('longitud').value),
+        idVendedor: parseInt(document.getElementById('idVendedor').value)
+      };
+
+      const method = id ? 'PUT' : 'POST';
+      const url = id ? `${API_BASE}/${id}` : `${API_BASE}`;
+
+      fetch(url, {
+        method: method,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(propiedad)
+      })
+        .then(res => {
+          if (!res.ok) throw new Error('Error en la operación');
+          return res.json();
+        })
+        .then(data => {
+          alert(id ? 'Propiedad actualizada exitosamente' : 'Propiedad creada exitosamente');
+          document.querySelector('#formularioPropiedad form').reset();
+          document.getElementById('formularioPropiedad').style.display = 'none';
+          cargarPropiedades();
+        })
+        .catch(err => {
+          console.error('Error en la operación:', err);
+          alert('Error al guardar propiedad');
+        });
+    }
+
+    function editarPropiedad(id) {
+      fetch(`${API_BASE}/${id}`)
+        .then(res => res.json())
+        .then(prop => {
+          document.getElementById('idPropiedad').value = prop.idPropiedad;
+          document.getElementById('direccion').value = prop.direccion;
+          document.getElementById('precio').value = prop.precio;
+          document.getElementById('tipo').value = prop.tipo.idTipo;
+          document.getElementById('operacion').value = prop.operacion.idOperacion;
+          document.getElementById('estado').value = prop.estado.idEstado;
+          document.getElementById('latitud').value = prop.latitud;
+          document.getElementById('longitud').value = prop.longitud;
+          document.getElementById('idVendedor').value = prop.idVendedor;
+
+          document.getElementById('formularioPropiedad').style.display = 'block';
+          document.getElementById('tituloFormulario').innerText = 'Editar Propiedad';
+        })
+        .catch(err => {
+          console.error('Error al cargar propiedad:', err);
+          alert('Error al cargar propiedad para editar');
+        });
+    }
+
+    function eliminarPropiedad(id) {
+      if (confirm(`¿Estás seguro de que deseas eliminar la propiedad con ID ${id}?`)) {
+        fetch(`${API_BASE}/${id}`, {
+          method: 'DELETE'
+        })
+          .then(res => {
+            if (res.ok) {
+              alert('Propiedad eliminada');
+              cargarPropiedades();
+            } else {
+              throw new Error('Error al eliminar propiedad');
+            }
+          })
+          .catch(err => {
+            console.error('Error al eliminar propiedad:', err);
+            alert('Error al eliminar propiedad');
+          });
+      }
+    }
+
+    cargarPropiedades();
+    cargarOpciones();
+  </script>
+</body>
+</html>
