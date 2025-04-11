@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Inmobiliaria - Perfil de Usuario</title>
+    <link rel="stylesheet" href="../Estilos/styles.css">
+    <link rel="stylesheet" href="../Estilos/dashboard.css">
+    <link rel="stylesheet" href="../Estilos/usuario.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar de navegación -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-building"></i>
+                <h3>Red Inmobiliaria</h3>
+            </div>
+            
+            <div class="user-info">
+                <div class="user-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="user-details">
+                    <h4 id="user-name"></h4>
+                    <span id="user-role"></span>
+                </div>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li><a href="dashboard.html"><i class="fas fa-home"></i> Panel Principal</a></li>
+                <li><a href="#"><i class="fas fa-list"></i> Propiedades</a></li>
+                <li><a href="#"><i class="fas fa-calendar"></i> Citas</a></li>
+                <li class="active"><a href="usuario.html"><i class="fas fa-user"></i> Mi Perfil</a></li>
+                <li class="logout"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+            </ul>
+        </div>
+        
+        <!-- Contenido principal -->
+        <div class="main-content">
+            <div class="top-bar">
+                <div class="search-bar">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Buscar propiedades...">
+                </div>
+                
+                <div class="user-actions">
+                    <a href="#" class="notification">
+                        <i class="fas fa-bell"></i>
+                    </a>
+                    <a href="#" class="menu-toggle">
+                        <i class="fas fa-bars"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="page-header">
+                <h2>Mi Perfil</h2>
+                <p>Gestiona tu información personal y preferencias de cuenta</p>
+            </div>
+
+            <!-- Contenedor del perfil del usuario -->
+            <div class="profile-container">
+                <div class="profile-section user-profile-header">
+                    <div class="profile-avatar">
+                        <i class="fas fa-user-circle"></i>
+                        
+                    </div>
+                    <div class="profile-header-info">
+                        <h3 id="profile-name"></h3>
+                        <p id="profile-email"></p>
+                        <p><span id="profile-role">Usuario</span> ·     Miembro desde <span id="profile-joined-date"></span></p>
+                    </div>
+                </div>
+
+                <!-- Formulario de información personal -->
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-user"></i> Información Personal</h3>
+                        <button id="edit-profile-btn" class="btn-secondary">
+                            <i class="fas fa-pencil-alt"></i> Editar
+                        </button>
+                    </div>
+                    
+                    <!-- Vista de información (por defecto) -->
+                    <div id="profile-info-view" class="profile-info">
+                        <div class="info-row">
+                            <div class="info-label">Nombre Completo:</div>
+                            <div id="display-fullname" class="info-value"></div>
+                        </div>
+                        <div class="info-row">
+                            <div class="info-label">Correo Electrónico:</div>
+                            <div id="display-email" class="info-value"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Formulario de edición (oculto por defecto) -->
+                    <div id="profile-edit-form" class="profile-form hidden">
+                        <div class="form-group">
+                            <label for="edit-fullname">Nombre Completo:</label>
+                            <input type="text" id="edit-fullname" name="nombreUsuario">
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-email">Correo Electrónico:</label>
+                            <input type="email" id="edit-email" name="email_usuario">
+                        </div>
+                        <div class="form-actions">
+                            <button id="save-profile-btn" class="btn-primary">Guardar Cambios</button>
+                            <button id="cancel-edit-btn" class="btn-secondary">Cancelar</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cambio de contraseña -->
+                <div class="profile-section">
+                    <div class="section-header">
+                        <h3><i class="fas fa-lock"></i> Seguridad de la cuenta</h3>
+                    </div>
+                    <div class="profile-form">
+                        <div class="form-group">
+                            <label for="current-password">Contraseña Actual:</label>
+                            <input type="password" id="current-password" name="current-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="new-password">Nueva Contraseña:</label>
+                            <input type="password" id="new-password" name="new-password">
+                        </div>
+                        <div class="form-group">
+                            <label for="confirm-password">Confirmar Contraseña:</label>
+                            <input type="password" id="confirm-password" name="confirm-password">
+                        </div>
+                        <div class="form-actions">
+                            <button id="change-password-btn" class="btn-primary">Cambiar Contraseña</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Eliminar cuenta -->
+                <div class="profile-section danger-zone">
+                    <div class="section-header">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Zona de Peligro</h3>
+                    </div>
+                    <div class="danger-content">
+                        <p>Eliminar tu cuenta es una acción permanente y no se puede deshacer. Toda tu información y datos asociados serán eliminados.</p>
+                        <button id="delete-account-btn" class="btn-danger">Eliminar mi Cuenta</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal de confirmación para eliminar cuenta (oculto por defecto) -->
+            <div id="delete-confirm-modal" class="modal hidden">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h3><i class="fas fa-exclamation-triangle"></i> Eliminar Cuenta</h3>
+                        <button class="close-modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <p>¿Estás seguro de que deseas eliminar tu cuenta? Esta acción no se puede deshacer y toda tu información será eliminada permanentemente.</p>
+                        <div class="form-group">
+                            <label for="delete-confirm-password">Ingresa tu contraseña para confirmar:</label>
+                            <input type="password" id="delete-confirm-password">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="confirm-delete-btn" class="btn-danger">Sí, Eliminar mi Cuenta</button>
+                        <button class="btn-secondary cancel-delete">Cancelar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../Script/auth-service.js"></script>
+    <script src="../Script/perfil-usuario.js"></script>
+</body>
+</html>
