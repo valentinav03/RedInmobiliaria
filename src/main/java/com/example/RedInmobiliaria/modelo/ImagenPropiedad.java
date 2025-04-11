@@ -26,7 +26,7 @@ public class ImagenPropiedad {
     private Integer idImagen;
 
     @ManyToOne
-    @JoinColumn(name = "idPropiedad", nullable = false)
+    @JoinColumn(name = "id_propiedad",referencedColumnName = "id_propiedad", nullable = false)
     private Propiedad propiedad;
 
     @Column(name = "urlImagen", nullable = false)

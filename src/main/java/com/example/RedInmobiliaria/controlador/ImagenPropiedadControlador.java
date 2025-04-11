@@ -30,6 +30,7 @@ public class ImagenPropiedadControlador {
     @Autowired
     private ImagenPropiedadServicio service;
     
+    
     //Obtener todas las imagenes
     @GetMapping
     public List<ImagenPropiedad> getImagenes(){
@@ -43,15 +44,19 @@ public class ImagenPropiedadControlador {
     }
     
     //Obtener imagenes por ID de propiedad
-    @GetMapping("/propiedad/{idPropiedad}")
+    @GetMapping("/propiedad/{propiedadId}")
     public List<ImagenPropiedad> getImagenesByPropiedadId(@PathVariable Integer propiedadId){
         return service.getImagenesPropiedad(propiedadId);
     }
     
     //Crear una nueva imagen
     @PostMapping
-    public ImagenPropiedad crearImagen(@RequestBody ImagenPropiedad imagen){
-        return service.guardarImagen(imagen);
+    public ResponseEntity<ImagenPropiedad> crearImagen(@RequestBody ImagenPropiedad imagenPropiedad) {
+        if (imagenPropiedad.getPropiedad() == null || imagenPropiedad.getPropiedad().getIdPropiedad() == null) {
+            return ResponseEntity.badRequest().body(null); // Devuelve un error si falta la propiedad
+        }
+        ImagenPropiedad nuevaImagen = service.guardarImagen(imagenPropiedad);
+        return ResponseEntity.ok(nuevaImagen);
     }
     
     //Actualizar una imagen
