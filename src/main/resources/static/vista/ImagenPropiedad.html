@@ -5,20 +5,51 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Gestión de Imágenes por Propiedad</title>
   <link rel="stylesheet" href="../Estilos/ImagenPropiedad.css">
+  <link rel="stylesheet" href="../Estilos/styles.css">
+  <link rel="stylesheet" href="../Estilos/dashboard.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </head>
 <body>
-  <header>
-    <h1>Gestión de Imágenes por Propiedad</h1>
-  </header>
+  <div class="dashboard-container">
+    <!-- Sidebar de navegación -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-building"></i>
+            <h3>Red Inmobiliaria</h3>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="user-details">
+                <h4 id="user-name"></h4>
+                <span id="user-role"></span>
+            </div>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="active"><a href="dashboard.html"><i class="fas fa-home"></i> Panel Principal</a></li>
+            <li><a href="administracion.html"><i class="fas fa-list"></i>Administración de propiedades</a></li>
+            <li><a href="ver-citas.html"><i class="fas fa-calendar"></i> Citas</a></li>
+            <li><a href="ImagenPropiedad.html"><i class="fas fa-edit"></i>Edición de imágenes</a></li>
+            <li><a href="usuario.html"><i class="fas fa-user"></i> Mi Perfil</a></li>
+            <li class="logout"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+        </ul>
+    </div>
+  <header>  </header>
 
-  <div class="container">
+  <div class="containerr">
+
     <div class="form-section">
+      <h1>Gestión de Imágenes</h1>
+      <br>
       <h2>Buscar Imágenes por Propiedad</h2>
       <form onsubmit="buscarPorPropiedad(event)">
-        <label for="idPropiedadBuscar">ID de la Propiedad:</label>
-        <input type="number" id="idPropiedadBuscar" placeholder="Ingresa el ID de la propiedad" required>
+        <label>Selecciona una propiedad</label>
+        <select id="selectorPropiedad" onchange="buscarPorPropiedad()"></select>
+        <div id="imagenesPropiedad"></div>
         <div class="buttons">
-          <button type="submit">Buscar</button>
           <button type="button" onclick="mostrarTodasLasImagenes()">Mostrar Todas las Imágenes</button>
         </div>
       </form>
@@ -26,20 +57,37 @@
 
     <!-- Botón para añadir nueva imagen -->
     <div>
-      <button class="add-button" onclick="mostrarFormulario()">Añadir Nueva Imagen</button>
+      <button class="add-button" onclick="mostrarFormulario1()">Añadir Nueva Imagen</button>
     </div>
 
     <div class="form-section" id="formularioImagen" style="display: none;">
-      <h2 id="tituloFormulario">Nueva Imagen</h2>
-      <form onsubmit="submitFormulario(event)">
+      <form onsubmit="submitFormulario(event)" enctype="multipart/form-data">
+        <h2 id="tituloFormulario">Nueva Imagen</h2>
         <input type="hidden" id="idImagen">
-        <label for="idPropiedad">ID de la Propiedad:</label>
-        <input type="number" id="idPropiedad" placeholder="Ingresa el ID de la propiedad" required>
-        <label for="urlImagen">URL de la Imagen:</label>
-        <input type="text" id="urlImagen" placeholder="Ingresa la URL de la imagen" required>
+        <label for="idPropiedad">Selecciona la propiedad:</label>
+        <select id="idPropiedad" required></select>
+        <label for="imagenArchivo">Subir una imagen:</label>
+        <input type="file" id="imagenArchivo" name="file" accept="image/*" required>
         <div class="buttons">
-          <button type="submit">Guardar</button>
-          <button type="button" onclick="cerrarFormulario()">Cancelar</button>
+          <button type="submit" class="btnguardar">Guardar</button>
+          <button type="button" onclick="cerrarFormulario()" class="btncancelar">Cancelar</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Botón para editar propiedad-->
+
+    <div class="form-section" id="formularioEditar" style="display: none;">
+      <form onsubmit="submitFormulario(event)" enctype="multipart/form-data">
+        <h3 id="tituloFormulario">Editar Imagen Propiedad</h3>
+        <label>Propiedad seleccionada:</label>
+        <p id="direccion" style="font-weight: bold; color: #5a4233;">Cargando...</p>
+        <input type="number" id="idPropiedadEditar" name="idPropiedadEditar" hidden>
+        <label for="imagenArchivo">Subir una imagen:</label>
+        <input type="file" id="imagenArchivo" name="file" accept="image/*" required>
+        <div class="buttons">
+          <button type="submit" class="btnguardar" onclick="guardarEdicionImagen()">Guardar</button>
+        <button type="button" onclick="cerrarFormulario2()" class="btncancelar">Cancelar</button>
         </div>
       </form>
     </div>
@@ -50,7 +98,7 @@
         <thead>
           <tr>
             <th>ID Imagen</th>
-            <th>ID Propiedad</th>
+            <th>Dirección Propiedad</th>
             <th>Previsualización</th>
             <th>Acciones</th>
           </tr>
@@ -64,31 +112,65 @@
 
   <script>
     const API_URL = '/api/imagenPropiedad';
+    function cargarPropiedades() {
+  const token = localStorage.getItem("token");
 
-    function buscarPorPropiedad(event) {
-      event.preventDefault();
-      const idPropiedad = document.getElementById('idPropiedadBuscar').value;
-
-      fetch(`${API_URL}/propiedad/${idPropiedad}`)
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('No se encontraron imágenes para la propiedad especificada.');
-          }
-          return response.json();
-        })
-        .then(data => {
-          cargarImagenes(data);
-        })
-        .catch(error => {
-          console.error('Error al buscar imágenes:', error);
-          alert('No se encontraron imágenes para la propiedad especificada.');
-        });
+  fetch("http://localhost:8094/api/propiedades", {
+    headers: {
+      "Authorization": `Bearer ${token}`
     }
+  })
+  .then(res => res.json())
+  .then(data => {
+    const selector = document.getElementById("selectorPropiedad");
+    selector.innerHTML = '<option value="">-- Selecciona una propiedad --</option>';
+
+    data.forEach(prop => {
+      selector.innerHTML += `
+        <option value="${prop.idPropiedad}">
+          ${prop.direccion} (${prop.tipo?.nombreTipoPropiedad || "Propiedad"})
+        </option>
+      `;
+    });
+  })
+  .catch(error => {
+    console.error("Error al cargar propiedades:", error);
+  });
+}
+
+function buscarPorPropiedad() {
+  const idSeleccionado = document.getElementById("selectorPropiedad").value;
+
+  if (!idSeleccionado) {
+    alert("Por favor selecciona una propiedad válida.");
+    return;
+  }
+
+  fetch(`http://localhost:8094/api/imagenPropiedad/propiedad/${idSeleccionado}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("No se pudieron cargar las imágenes");
+      }
+      return response.text();
+    })
+    .then(urlImagen => {
+      const contenedor = document.getElementById("imagenesPropiedad");
+            contenedor.innerHTML = `
+                <img src="${urlImagen}" alt="Imagen de la propiedad" style="width: 50%; height: 100%; border-radius: 8px;"/>
+            `;
+})
+    .catch(error => {
+      console.error("Error al obtener imágenes por propiedad:", error);
+      alert("Error al obtener imágenes de la propiedad seleccionada.");
+    });
+}
 
     function mostrarTodasLasImagenes() {
-      fetch(`${API_URL}`)
+      
+      fetch(`http://localhost:8094/api/imagenPropiedad`)
         .then(response => response.json())
         .then(data => {
+          console.log("Imágenes recibidas:", data);
           cargarImagenes(data);
         })
         .catch(error => {
@@ -98,17 +180,23 @@
     }
 
     function cargarImagenes(imagenes) {
+
       const lista = document.getElementById('listaImagenes');
       lista.innerHTML = '';
       imagenes.forEach(imagen => {
+        console.log("Propiedad:", imagen.propiedad, "URL:", imagen.urlImagen); 
+
         const fila = document.createElement('tr');
         fila.innerHTML = `
           <td>${imagen.idImagen}</td>
-          <td>${imagen.propiedad.idPropiedad}</td>
+          <td>${imagen.propiedad.direccion}</td>
           <td><img src="${imagen.urlImagen}" alt="Imagen de propiedad"></td>
           <td>
             <div class="action-buttons">
-              <button class="edit-button" onclick="editarImagen(${imagen.idImagen})">Editar</button>
+              <input type="hidden" id="idImagen">
+              <input type="hidden" id="propiedad" disabled>
+              <input type="hidden" id="urlImagen">
+              <button class="edit-button" onclick="mostrarFormulario2(${imagen.idImagen})">Editar</button>
               <button class="delete-button" onclick="eliminarImagen(${imagen.idImagen})">Eliminar</button>
             </div>
           </td>
@@ -117,66 +205,295 @@
       });
     }
 
-    function mostrarFormulario() {
-      document.getElementById('formularioImagen').style.display = 'block';
+  function cargarSelectorPropiedades() {
+  const token = localStorage.getItem("token");
+  fetch("http://localhost:8094/api/propiedades", {
+    headers: {
+      "Authorization": `Bearer ${token}`
     }
+  })
+    .then(res => res.json())
+    .then(data => {
+      
+      const selects = [
+        document.getElementById("idPropiedad"),        // para formulario de creación
+        document.getElementById("idPropiedadEditar")   // para formulario de edición
+      ];
+
+      selects.forEach(selector => {
+        if (!selector) return; // si no existe, no hace nada
+        selector.innerHTML = '<option value="">-- Selecciona una propiedad --</option>';
+        data.forEach(prop => {
+          selector.innerHTML += `
+            <option value="${prop.idPropiedad}">
+              ${prop.direccion} (${prop.tipo?.nombreTipoPropiedad || "Propiedad"})
+            </option>
+          `;
+        });
+      });
+    })
+    .catch(err => {
+      console.error("Error al cargar propiedades en los selects:", err);
+    });
+}
+
+    function mostrarFormulario1() {
+      document.getElementById('formularioImagen').style.display = 'block';
+      cargarSelectorPropiedades();
+    }
+
+    function mostrarFormulario2(idImagen) {
+      document.getElementById('formularioEditar').style.display = 'block';
+      cargarSelectorPropiedades();
+     
+      fetch(`http://localhost:8094/api/imagenPropiedad/${idImagen}`)
+      .then(response => {
+      if (!response.ok) throw new Error("No se pudo obtener la imagen");
+      return response.json();
+      })
+      .then(imagen => {
+      // Llenar campos del formulario
+      document.getElementById('idImagen').value = imagen.idImagen;
+      document.getElementById('idPropiedadEditar').value = imagen.propiedad.idPropiedad;
+      document.getElementById('direccion').textContent = imagen.propiedad.direccion;
+      document.getElementById('formularioEditar').dataset.id = imagen.idImagen;
+    })
+      .catch(error => {
+        console.error("Error al obtener propiedad:", error);
+        document.getElementById("direccion").textContent = "No se pudo cargar el nombre";
+      });
+  }
 
     function cerrarFormulario() {
       document.getElementById('formularioImagen').style.display = 'none';
       document.getElementById('idImagen').value = '';
       document.getElementById('idPropiedad').value = '';
-      document.getElementById('urlImagen').value = '';
+      document.getElementById('imagenArchivo').value = '';
     }
+
+    function cerrarFormulario2() {
+      document.getElementById('formularioEditar').style.display = 'none';
+    }
+
 
     function submitFormulario(event) {
       event.preventDefault();
-      const idImagen = document.getElementById('idImagen').value;
       const idPropiedad = document.getElementById('idPropiedad').value;
-      const urlImagen = document.getElementById('urlImagen').value;
+      const archivo = document.getElementById('imagenArchivo').files[0];
 
-      const imagen = {
-        propiedad: { idPropiedad: parseInt(idPropiedad) },
-        urlImagen: urlImagen
+      const formData = new FormData();
+      formData.append("file", archivo);
+
+      fetch("http://localhost:8094/api/imagenPropiedad/upload", {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.text())
+      .then(url => {
+         console.log("URL recibida:", url);
+        // SEGUNDA PETICIÓN: guardar imagen en la base de datos
+        const imagen = {
+        propiedad: { idPropiedad: idPropiedad },
+        urlImagen: url
       };
 
-      if (idImagen) {
-        fetch(`${API_URL}/${idImagen}`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(imagen)
-        }).then(() => {
-          mostrarTodasLasImagenes();
-          cerrarFormulario();
-        });
-      } else {
-        fetch(API_URL, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(imagen)
-        }).then(() => {
-          mostrarTodasLasImagenes();
-          cerrarFormulario();
-        });
-      }
-    }
+      return fetch("http://localhost:8094/api/imagenPropiedad", {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(imagen)
+      });
+    })
+    .then(res => res.json())
+.then(data => {
+  alert("Imagen guardada correctamente");
+  location.reload(); // Recargar página para ver cambios
+  mostrarTodasLasImagenes();
+  cerrarFormulario();
+})
+}
 
-    function editarImagen(idImagen) {
-      fetch(`${API_URL}/${idImagen}`)
-        .then(response => response.json())
-        .then(imagen => {
-          document.getElementById('idImagen').value = imagen.idImagen;
-          document.getElementById('idPropiedad').value = imagen.propiedad.idPropiedad;
-          document.getElementById('urlImagen').value = imagen.urlImagen;
-          mostrarFormulario();
-        });
-    }
+
+function editarImagen(idImagen) {
+  fetch(`http://localhost:8094/api/imagenPropiedad/${idImagen}`)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error("No se pudo obtener la imagen");
+      }
+      return response.json();
+    })
+    .then(imagen => {
+      console.log("Imagen recibida:", imagen); // Verifica estructura completa
+
+      // Asegurarse de que tiene los datos necesarios
+      if (!imagen.urlImagen || !imagen.propiedad) {
+        throw new Error("Faltan datos de la imagen");
+      }
+
+      document.getElementById('idImagen').value = imagen.idImagen;
+      document.getElementById('propiedad').value = imagen.propiedad.direccion;
+      document.getElementById('urlImagen').value = imagen.urlImagen;
+
+      document.getElementById('formularioEditar').style.display = 'block';
+    })
+    .catch(error => {
+      console.error('Error al obtener la imagen:', error);
+    });
+}
+
+
+function guardarEdicionImagen() {
+  const id = document.getElementById('formularioEditar').dataset.id;
+  const idPropiedad = parseInt(document.getElementById('idPropiedadEditar').value);
+  const urlImagen = document.getElementById('urlImagenEditar').value;
+
+  const imagenEditada = {
+    propiedad: { idPropiedad },
+    urlImagen
+  };
+
+  fetch(`http://localhost:8094/api/imagenPropiedad/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(imagenEditada)
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("No se pudo actualizar la imagen");
+      return res.json();
+    })
+    .then(data => {
+      alert('Imagen actualizada correctamente');
+      location.reload(); // Recargar página para ver cambios
+    })
+    .catch(error => {
+      console.error('Error al actualizar la imagen:', error);
+      alert('Error al actualizar la imagen');
+    });
+}
 
     function eliminarImagen(idImagen) {
       if (confirm('¿Estás seguro de eliminar esta imagen?')) {
-        fetch(`${API_URL}/${idImagen}`, { method: 'DELETE' })
-          .then(() => mostrarTodasLasImagenes());
+        fetch(`http://localhost:8094/api/imagenPropiedad/${idImagen}`, { method: 'DELETE' })
+        .then(response => {
+        if (!response.ok) throw new Error("No se pudo eliminar la imagen");
+        return response;
+      })
+      .then(() => {
+        alert("Imagen eliminada correctamente");
+        mostrarTodasLasImagenes();
+      })
+      .catch(err => {
+        console.error("Error al eliminar imagen:", err);
+        alert("Error al eliminar la imagen");
+      });
       }
     }
+
+    
+// Verificar si el usuario está autenticado
+function isAuthenticated() {
+  const token = localStorage.getItem('token');
+  return !!token; // Retorna true si existe un token
+}
+
+// Función para decodificar JWT
+function parseJwt(token) {
+  try {
+      return JSON.parse(atob(token.split('.')[1])); // Decodifica el payload
+  } catch (e) {
+      return null;
+  }
+}
+
+// Obtener token actual
+function getToken() {
+  return localStorage.getItem('token');
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    
+  const token = localStorage.getItem("token");
+
+  if (!isAuthenticated()) {
+      window.location.href = 'login.html'; // Redirigir al login si no hay sesión
+      return;
+  }
+
+  const userData = parseJwt(token);
+  const userId = userData ? userData.id : null;
+  
+
+  if (!userId) {
+      console.error("No se pudo obtener el ID del usuario.");
+      return;
+  }
+
+  // Verificar el rol
+  const tipoUser = userData ? userData.sub : null;
+  console.log(tipoUser); 
+
+  if(tipoUser === "Cliente") {
+      
+      // Ocultamos el menú de propiedades
+      const propiedadesMenu = document.querySelector('.sidebar-menu li:nth-child(2)');
+      propiedadesMenu.style.display = 'none';
+  }
+
+  cargarDatos(token, userId);
+  cargarPropiedades();
+  
+});
+
+
+// Cargar datos del usuario
+async function cargarDatos(token, userId){
+  try {
+
+      const response = await fetch(`http://localhost:8094/api/usuario/list/${userId}`, {
+          method: "GET",
+          headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json"
+          }
+      });
+
+      if (!response.ok) {
+          throw new Error("Error al cargar los datos del usuario");
+      }
+
+      const usuario = await response.json();
+      console.log("Datos del usuario:", usuario);
+
+      // Actualizar la interfaz con los datos del usuario
+      document.getElementById("user-name").textContent = usuario.nombre_usuario;
+      document.getElementById("user-role").textContent = usuario.id_tipo_usuario.nombre_tipo_usuario;
+  
+      
+      return usuario;
+  } catch (error) {
+      console.error("Error al obtener los datos del usuario:", error);
+  }
+}
+
+// Al cargar la página
+document.addEventListener("DOMContentLoaded", function () {
+
+  const userData = localStorage.getItem("user");
+
+  if (userData) {
+    const user = JSON.parse(userData);
+    const nombreUsuario = user.nombreUsuario;
+
+    // Mostrar el nombre en el HTML
+    const nombreUsuarioElement = document.getElementById("nombreUsuario");
+    if (nombreUsuarioElement) {
+      nombreUsuarioElement.textContent = nombreUsuario;
+    }
+  }
+
+});
+
   </script>
 </body>
 </html>

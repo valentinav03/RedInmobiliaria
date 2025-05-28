@@ -42,30 +42,32 @@
     }
 
     table {
-      width: 100%;
+      width: 95%;                      /* Más estrecho para centrar mejor */
+      margin-bottom: 180px;               /* Centra horizontalmente y da espacio arriba/abajo */
       border-collapse: collapse;
-      margin-top: 20px;
       background-color: white;
-    }
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+      border-radius: 8px;
+      overflow: hidden;
+}
 
-    th, td {
-      border: 1px solid var(--accent);
-      padding: 10px;
-      text-align: left;
-    }
+thead {
+  background-color: var(--accent);
+  color: var(--dark);
+}
 
-    th {
-      background-color: var(--accent);
-      color: var(--dark);
-    }
+th, td {
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--accent);
+  text-align: center;
+}
 
     #formularioCita {
       background-color: white;
       padding: 20px;
       border: 1px solid var(--accent);
       border-radius: 5px;
-      margin-top: 20px;
-      display: none;
+      margin-top: 300px;
     }
 
     label {
@@ -81,21 +83,6 @@
       border-radius: 4px;
     }
 
-    form button[type="submit"] {
-      background-color: var(--success);
-    }
-
-    form button[type="button"] {
-      background-color: var(--error);
-    }
-
-    form button[type="submit"]:hover {
-      background-color: #2e5e2c;
-    }
-
-    form button[type="button"]:hover {
-      background-color: #7d1f1b;
-    }
 
     h1 {
       color: var(--primary);
@@ -103,14 +90,58 @@
       margin-left: 180px;
 
     }
+
+   
+  button {
+  background-color: var(--primary);
+  color: rgb(236, 232, 232);
+  border: none;
+  padding: 6px 12px;
+  margin: 5px auto;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0px;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6); /* Fondo oscuro transparente */
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999; /* Encima de todo */
+}
+
+.modal-content {
+  background-color: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  width: 400px;
+  max-width: 90%;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Animación suave */
+@keyframes fadeIn {
+  from { opacity: 0; transform: scale(0.9); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+
   </style>
 </head>
 <link rel="stylesheet" href="../Estilos/styles.css">
 <link rel="stylesheet" href="../Estilos/dashboard.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-<h1>Mis Citas Agendadas</h1>
 
 <body>
+  <h1>Mis citas agendadas</h1>
 
   <div class="dashboard-container">
     <!-- Sidebar de navegación -->
@@ -139,21 +170,19 @@
             <li class="logout"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
         </ul>
     </div>
-
   <table>
-
     <thead>
-      
       <tr>
-        <th>ID</th>
-        <th>Propiedad</th>
         <th>Dirección</th>
-        <th>Fecha y Hora</th>
+        <th>Fecha | Hora</th>
         <th>Estado</th>
         <th>Acciones</th>
       </tr>
     </thead>
-    <tbody id="tablaCitas"></tbody>
+    <tbody id="tablaCitas">
+      
+    </tbody>
+    
   </table>
 
   <script>
@@ -176,8 +205,6 @@
           citas.forEach(cita => {
             tabla.innerHTML += `
               <tr>
-                <td>${cita.id}</td>
-                <td>${cita.idPropiedad?.idPropiedad}</td>
                 <td>${cita.idPropiedad?.direccion || 'N/D'}</td>
                 <td>${new Date(cita.fechaHora).toLocaleString()}</td>
                 <td>${cita.idEstado?.nombre || 'Pendiente'}</td>
@@ -214,6 +241,191 @@
         });
       }
     }
+
+  function editarCita(id) { //SE USA MÉTODO GET PARA BUSCAR Y MOSTRAR INFO DE LA CITA
+  fetch(`http://localhost:8094/api/citas/list/${id}`)
+    .then(res => res.json())
+    .then(cita => {
+      console.log("Cita obtenida:", cita); // Revisa si cita y cita.fechaHora existen
+      if (!cita || !cita.fechaHora) {
+    throw new Error("La cita no contiene fechaHora");
+  }
+      document.getElementById('fechaHora').value = cita.fechaHora.slice(0, 16); // Formato para input datetime-local
+      document.getElementById('idPropiedad').value = cita.idPropiedad.idPropiedad;
+      document.getElementById('idEstado').value = cita.idEstado.id;
+      document.getElementById('formularioCita').dataset.id = id; // Guarda el ID para usar luego en PUT
+      document.getElementById('formularioCita').style.display = 'block';
+      document.getElementById('modalOverlay').style.display = "flex";
+
+    })
+    .catch(err => {
+      console.error('Error al obtener la cita:', err);
+      alert('No se pudo cargar la cita para editar');
+    });
+}
+
+//Ventana que sale cuando se va a editar la cita, que es solo la fecha lo que edita. 
+// SE USA MÉTODO PUT PARA ACTUALIZAR DATOS
+function guardarEdicion() {
+  const id = document.getElementById('formularioCita').dataset.id;
+  const fechaHora = document.getElementById('fechaHora').value;
+  const idPropiedad = parseInt(document.getElementById('idPropiedad').value);
+  const idEstado = parseInt(document.getElementById('idEstado').value);
+  const idCliente = JSON.parse(localStorage.getItem("user")).id;
+
+  const citaEditada = {
+    idCliente,
+    idPropiedad,
+    idEstado,
+    fechaHora
+  };
+
+  fetch(`http://localhost:8094/api/citas/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(citaEditada)
+  })
+    .then(res => {
+      if (!res.ok) throw new Error("No se pudo actualizar la cita");
+      return res.json();
+    })
+    .then(data => {
+      alert('Cita actualizada correctamente');
+      location.reload();
+    })
+    .catch(err => {
+      console.error('Error al actualizar la cita:', err);
+      alert('Error al actualizar la cita');
+    });
+}
+
+function cerrarModal() {
+  document.getElementById("modalOverlay").style.display = "none";
+}
+
+
+// Verificar si el usuario está autenticado
+function isAuthenticated() {
+  const token = localStorage.getItem('token');
+  return !!token; // Retorna true si existe un token
+}
+
+// Función para decodificar JWT
+function parseJwt(token) {
+  try {
+      return JSON.parse(atob(token.split('.')[1])); // Decodifica el payload
+  } catch (e) {
+      return null;
+  }
+}
+
+// Obtener token actual
+function getToken() {
+  return localStorage.getItem('token');
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    
+  const token = localStorage.getItem("token");
+
+  if (!isAuthenticated()) {
+      window.location.href = 'login.html'; // Redirigir al login si no hay sesión
+      return;
+  }
+
+  const userData = parseJwt(token);
+  const userId = userData ? userData.id : null;
+  
+
+  if (!userId) {
+      console.error("No se pudo obtener el ID del usuario.");
+      return;
+  }
+
+  // Verificar el rol
+  const tipoUser = userData ? userData.sub : null;
+  console.log(tipoUser); 
+
+  if(tipoUser === "Cliente") {
+      
+      // Ocultamos el menú de propiedades
+      const propiedadesMenu = document.querySelector('.sidebar-menu li:nth-child(2)');
+      propiedadesMenu.style.display = 'none';
+  }
+
+  cargarDatos(token, userId);
+  cargarPropiedades(); // ← Llama aquí la función para cargar propiedades
+  contarPropiedades();
+
+  
+});
+
+
+// Cargar datos del usuario
+async function cargarDatos(token, userId){
+  try {
+
+      const response = await fetch(`http://localhost:8094/api/usuario/list/${userId}`, {
+          method: "GET",
+          headers: {
+              "Authorization": `Bearer ${token}`,
+              "Content-Type": "application/json"
+          }
+      });
+
+      if (!response.ok) {
+          throw new Error("Error al cargar los datos del usuario");
+      }
+
+      const usuario = await response.json();
+      console.log("Datos del usuario:", usuario);
+
+      // Actualizar la interfaz con los datos del usuario
+      document.getElementById("user-name").textContent = usuario.nombre_usuario;
+      document.getElementById("user-role").textContent = usuario.id_tipo_usuario.nombre_tipo_usuario;
+  
+      
+      return usuario;
+  } catch (error) {
+      console.error("Error al obtener los datos del usuario:", error);
+  }
+}
+
+// Al cargar la página
+document.addEventListener("DOMContentLoaded", function () {
+
+  const userData = localStorage.getItem("user");
+
+  if (userData) {
+    const user = JSON.parse(userData);
+    const nombreUsuario = user.nombreUsuario;
+
+    // Mostrar el nombre en el HTML
+    const nombreUsuarioElement = document.getElementById("nombreUsuario");
+    if (nombreUsuarioElement) {
+      nombreUsuarioElement.textContent = nombreUsuario;
+    }
+  }
+
+});
+
   </script>
+
+  <!--Esto aparece cuando se va a editar la cita-->
+  <div id="modalOverlay" class="modal-overlay" style="display: none;">
+  <div id="formularioCita" class="modal-content">
+    <h3 id="tituloFormulario">Editar Fecha de la Cita</h3>
+    <label for="fechaHora">Nueva Fecha y Hora:</label>
+    <input type="datetime-local" id="fechaHora" required>
+  
+    <!-- Campos ocultos necesarios -->
+    <input type="hidden" id="idPropiedad">
+    <input type="hidden" id="idEstado">
+    <div style="margin-top: 15px;">
+    <button onclick="guardarEdicion()">Guardar Cambios</button>
+    <button onclick="cerrarModal()" style="background-color: var(--error);">Cancelar</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>

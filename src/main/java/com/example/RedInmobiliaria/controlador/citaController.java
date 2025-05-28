@@ -39,21 +39,23 @@ public class citaController {
         return citaService.buscarCita(id);
     }
 
+
     @PutMapping("/{id}")
-    public ResponseEntity<cita> editar(@PathVariable Integer id, @RequestBody cita cita){
+    public ResponseEntity<cita> editar(@PathVariable Integer id, @RequestBody CitaDto citaDto){
         cita obj = citaService.buscarCita(id);
         if(obj != null) {
-            obj.setIdEstado(cita.getIdEstado());
-            obj.setId(cita.getId());
-            obj.setIdCliente(cita.getIdCliente());
-            obj.setFechaHora(cita.getFechaHora());
-            obj.setIdPropiedad(cita.getIdPropiedad());
+            obj.setFechaHora(citaDto.getFechaHora());
+            obj.setIdCliente(usuarioRepositorio.findById(citaDto.getIdCliente()).orElseThrow());
+            obj.setIdEstado(estadoCitaRepositorio.findById(citaDto.getIdEstado()).orElseThrow());
+            obj.setIdPropiedad(propiedadRepository.findById(citaDto.getIdPropiedad()).orElseThrow());
             citaService.nuevaCita(obj);
-        }else {
-            return new ResponseEntity<>(obj, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(obj, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return new ResponseEntity<>(obj, HttpStatus.OK);
     }
+
+
 
     @PostMapping("/")
     public ResponseEntity<cita> agregar(@RequestBody CitaDto citaDto) {

@@ -16,27 +16,15 @@ body {
   padding: 0;
 }
 
-header {
-  width: 100%;
-  background-color: var(--primary);
-  padding: 20px;
-  text-align: center;
-  color: white;
-}
 
-header h1 {
-  margin: 0;
+
+h1 {
   font-size: 24px;
+  padding-top: 20px;
+  text-align: start;
+  align-items: start;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 20px auto;
-  padding: 20px;
-  background-color: var(--light);
-  border-radius: 10px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
 
 .form-section, .table-section {
   margin-bottom: 20px;
@@ -173,8 +161,8 @@ table td img {
 
 .buttons {
   display: flex;
-  gap: 15px;
-  margin-top: 10px;
+  gap: 10px;
+  margin-bottom: 10px;
 }
 
 .buttons button {
@@ -184,4 +172,78 @@ table td img {
 .error {
   color: var(--error);
   font-size: 14px;
+}
+
+#selectorPropiedad{
+  width: 200px;
+}
+
+.dashboard-container {
+  display: flex;
+}
+
+.sidebar-menu {
+  width: 250px; /* o el ancho real de tu sidebar */
+  flex-shrink: 0;
+}
+
+.containerr {
+  margin-left: 250px;
+  padding: 30px;
+  max-width: 900px;
+}
+
+
+#imagenesPropiedad {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#imagenesPropiedad img {
+  max-width: 700px;
+  width: 160%;
+  height: 100%;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  justify-content: flex-end;
+}
+
+.btnguardar, .btncancelar {
+  width: 120px; /* Mismo ancho para todos */
+  height: 45px; /* Mismo alto */
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Botón Guardar */
+.btnguardar {
+  background-color: #a98560;
+  color: white;
+}
+
+.btnguardar:hover {
+  background-color: #92724f;
+}
+
+/* Botón Cancelar */
+.btncancelar {
+  background-color: #d02e22;
+  color: white;
+  margin-top: 24px;
+
+}
+
+.btncancelar:hover {
+  background-color: #d32f2f;
 }

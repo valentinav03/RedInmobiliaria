@@ -285,4 +285,20 @@ body {
     background-color: #977a57;
   }
   
+  .dashboard-welcome h2 {
+    font-size: 26px;
+    color: #8D7B68;
+    margin-bottom: 5px;
+
+  }
   
+  #welcome-name {
+    color: #b7800a;
+    font-weight: bold;
+    margin-left: 10px;
+  }
+  
+  .btn-agendar-cita{
+    display:flex;
+    margin-left: 200px;
+  }

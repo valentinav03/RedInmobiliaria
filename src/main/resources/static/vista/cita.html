@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Agendar Cita</title>
-  <link rel="stylesheet" href="/Estilos/styles.css">
+  <link rel="stylesheet" href="../Estilos/styles.css">
   <link rel="stylesheet" href="../Estilos/dashboard.css">
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
@@ -44,7 +44,7 @@
     <p id="nombreUsuario" style="font-weight: bold; color: #5a4233;">Cargando...</p>
     <input type="number" id="idCliente" name="idCliente" hidden>
 
-    <label>Propiedad Seleccionada:</label>
+    <label>Dirección propiedad:</label>
     <p id="direccion" style="font-weight: bold; color: #5a4233;">Cargando...</p>
     <input type="number" id="idPropiedad" name="idPropiedad" hidden>
 
@@ -52,12 +52,12 @@
     <label for="fechaHora">Fecha y Hora:</label>
     <input type="datetime-local" id="fechaHora" required>
 
-    <label for="idEstado">ID del Estado:</label>
-    <input type="number" id="idEstado" value="1" required>
+    <label for="idEstado"></label>
+    <input type="hidden" id="idEstado" value="1" required>
 
     <button type="submit">Guardar Cita</button>
   </form>
 
-  <script src="/Script/crear-cita.js"></script>
+  <script src="../Script/crear-cita.js"></script>
 </body>
 </html>

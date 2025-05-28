@@ -26,8 +26,8 @@ public class ImagenPropiedadServicio implements IImagenPropiedadServicio{
     }
     
     @Override
-    public List<ImagenPropiedad> getImagenesPropiedad(Integer propiedadID){
-        return imagenPropiedadRepositorio.findByPropiedadIdPropiedad(propiedadID);
+    public List<ImagenPropiedad> getImagenesPropiedad(Integer idPropiedad){
+        return imagenPropiedadRepositorio.findByPropiedad_IdPropiedad(idPropiedad);
     }
     
     @Override

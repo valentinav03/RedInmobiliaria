@@ -20,7 +20,7 @@ public interface IImagenPropiedadServicio {
     List<ImagenPropiedad> getImagenes();
 
     //Buscar por propiedad
-    List<ImagenPropiedad> getImagenesPropiedad(Integer propiedadID);
+    List<ImagenPropiedad> getImagenesPropiedad(Integer idPropiedad);
     
     //Guardar imagen
     ImagenPropiedad guardarImagen(ImagenPropiedad imagenPropiedad);

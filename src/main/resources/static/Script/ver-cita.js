@@ -36,3 +36,4 @@ async function eliminarCita(id) {
     alert("No se pudo eliminar la cita");
   }
 }
+
