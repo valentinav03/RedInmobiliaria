@@ -78,6 +78,8 @@ public class JwtUtils {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("id", usuario.getId()) // Añadir el ID como un claim
+                .claim("tipoUsuario", usuario.getId_tipo_usuario().getNombre_tipo_usuario()) // Añadir tipo de usuario
+                .claim("tipoUsuarioId", usuario.getId_tipo_usuario().getId()) // Añadir ID del tipo de usuario
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(secretKey)
@@ -107,6 +109,26 @@ public class JwtUtils {
                 .parseClaimsJws(token)
                 .getBody()
                 .get("id", Long.class);
+    }
+
+    // Extraer tipo de usuario del token JWT
+    public String getTipoUsuarioFromJwtToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("tipoUsuario", String.class);
+    }
+
+    // Extraer ID del tipo de usuario del token JWT
+    public Long getTipoUsuarioIdFromJwtToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(secretKey)
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .get("tipoUsuarioId", Long.class);
     }
     
     // Validar el token JWT
@@ -140,8 +162,15 @@ public class JwtUtils {
     }
     
     public String generateJwtTokenWithUserDetails(UserDetails userDetails) {
+        // Para este metodo, necesitamos buscar el usuario para obtener el tipo
+        Usuario usuario = usuarioRepositorio.findByNombreUsuario(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con nombre de usuario: " + userDetails.getUsername()));
+
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
+                .claim("id", usuario.getId())
+                .claim("tipoUsuario", usuario.getId_tipo_usuario().getNombre_tipo_usuario())
+                .claim("tipoUsuarioId", usuario.getId_tipo_usuario().getId())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(secretKey, SignatureAlgorithm.HS512)
