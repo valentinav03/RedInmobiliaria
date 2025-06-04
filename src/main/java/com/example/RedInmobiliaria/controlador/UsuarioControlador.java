@@ -177,4 +177,18 @@ public class UsuarioControlador {
         
         return new ResponseEntity<>("Usuario eliminado correctamente", HttpStatus.OK);
     }
+
+    @DeleteMapping("/admin/{id}")
+    public ResponseEntity<?> eliminarComoAdmin(@PathVariable Long id) {
+        Usuario usuario = usuarioServicio.buscarUsuario(id);
+
+        if (usuario == null) {
+            return new ResponseEntity<>("Usuario no encontrado", HttpStatus.NOT_FOUND);
+        }
+
+        usuarioServicio.borrarUsuario(id);
+        return new ResponseEntity<>("Usuario eliminado por el administrador", HttpStatus.OK);
+    }
+
+
 }
