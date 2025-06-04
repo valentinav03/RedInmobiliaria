@@ -5,17 +5,8 @@
 package com.example.RedInmobiliaria.controlador;
 
 import com.example.RedInmobiliaria.modelo.ImagenPropiedad;
-import com.example.RedInmobiliaria.repositorio.ImagenPropiedadRepositorio;
-import com.example.RedInmobiliaria.repositorio.PropiedadRepository;
 import com.example.RedInmobiliaria.servicio.ImagenPropiedadServicio;
-
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,12 +26,6 @@ public class ImagenPropiedadControlador {
     @Autowired
     private ImagenPropiedadServicio service;
 
-    @Autowired
-    private ImagenPropiedadRepositorio imagenPropiedadRepositorio;
-
-    @Autowired
-    private PropiedadRepository propiedadRepository;
-
     //Obtener todas las imagenes
     @GetMapping
     public List<ImagenPropiedad> getImagenes(){
@@ -55,40 +40,27 @@ public class ImagenPropiedadControlador {
     
     //Obtener imagenes por ID de propiedad
     @GetMapping("/propiedad/{idPropiedad}")
-    public ResponseEntity<String> getImagenesPropiedad(@PathVariable Integer idPropiedad) {
-        List<ImagenPropiedad> imagenes = imagenPropiedadRepositorio.findByPropiedad_IdPropiedad(idPropiedad);
-        if (imagenes.isEmpty()) {
-            return new ResponseEntity<>("URL_NO_DISPONIBLE", HttpStatus.NOT_FOUND);
+    public ResponseEntity<List<ImagenPropiedad>> getImagenesPropiedad(@PathVariable Integer idPropiedad){
+        List<ImagenPropiedad> imagenes = service.getImagenesPropiedad(idPropiedad); 
+        if(imagenes.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(imagenes);
         }
-        return ResponseEntity.ok(imagenes.get(0).getUrlImagen());
+        return ResponseEntity.ok(imagenes);
     }
 
 
     //Crear una nueva imagen
     @PostMapping("/upload")
-    public ResponseEntity<String> subirImagen(@RequestParam("file") MultipartFile file) {
-        try {
-            String nombreArchivo = file.getOriginalFilename();
-            Path rutaDestino = Paths.get("src/main/resources/static/uploads/" + nombreArchivo); // actualiza con tu ruta real
-
-            Files.copy(file.getInputStream(), rutaDestino, StandardCopyOption.REPLACE_EXISTING);
-
-            String urlPublica = "http://localhost:8094/uploads/" + nombreArchivo;
-            return ResponseEntity.ok(urlPublica);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al subir la imagen");
+    public ResponseEntity<?> subirImagen(@RequestParam("id_propiedad") Integer idPropiedad,
+                                         @RequestParam("file") MultipartFile file){
+        try{
+            ImagenPropiedad imagen = service.guardarImagen(idPropiedad, file);
+            return ResponseEntity.ok(imagen);
+        }catch(Exception e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
-
-    @PostMapping
-    public ResponseEntity<ImagenPropiedad> crearImagen(@RequestBody ImagenPropiedad imagen) {
-        ImagenPropiedad guardada = service.guardarImagen(imagen);
-        return ResponseEntity.ok(guardada);
-    }
-
-
+    
     //Actualizar una imagen
     @PostMapping("/{id}")
     public ResponseEntity<ImagenPropiedad> actualizarImagen(@PathVariable Integer id, @RequestBody ImagenPropiedad imagen){
@@ -103,7 +75,7 @@ public class ImagenPropiedadControlador {
     
     //Eliminar imagen
     @DeleteMapping("/{id}")
-    public ResponseEntity<ImagenPropiedad> eliminarImagen(@PathVariable Integer id) {
+    public ResponseEntity<Void> eliminarImagen(@PathVariable Integer id) {
         service.eliminarImagen(id);
         return ResponseEntity.noContent().build();
     }

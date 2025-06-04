@@ -5,7 +5,9 @@
 package com.example.RedInmobiliaria.servicio;
 
 import com.example.RedInmobiliaria.modelo.ImagenPropiedad;
+import java.io.IOException;
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  *
@@ -23,7 +25,7 @@ public interface IImagenPropiedadServicio {
     List<ImagenPropiedad> getImagenesPropiedad(Integer idPropiedad);
     
     //Guardar imagen
-    ImagenPropiedad guardarImagen(ImagenPropiedad imagenPropiedad);
+    ImagenPropiedad guardarImagen(Integer idPropiedad, MultipartFile file) throws IOException;
     
     //Eliminar imagen
     int eliminarImagen(Integer id);
